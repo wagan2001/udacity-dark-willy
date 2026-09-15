@@ -1,0 +1,566 @@
+/* ==UserStyle==
+@name         Udacity Dark (ChatGPT palette)
+@description  ChatGPT-style dark theme for udacity.com and learn.udacity.com
+@author       Will Agan
+@version      1.0.0
+==/UserStyle== */
+
+/*
+ * Udacity Dark - ChatGPT palette
+ * ==============================
+ * Import into Stylus, Cascadea, or any userstyle manager. Scope is
+ * www.udacity.com and learn.udacity.com (the old classroom.udacity.com host
+ * now 301s to learn.udacity.com, so it is deliberately omitted).
+ *
+ * How this works
+ * --------------
+ * udacity.com is a Chakra UI app. Chakra publishes its whole theme as CSS
+ * custom properties on :root, and Udacity's own components read those tokens
+ * (996 var(--chakra-*) references in a single server-rendered page), so
+ * re-pointing the tokens re-themes the app the way the app itself expects.
+ * Emotion then generates one hashed class per styled element, which is why a
+ * second layer of explicit rules targets Chakra's stable component classes
+ * with !important.
+ *
+ * Palette (ChatGPT dark)
+ * ----------------------
+ *   canvas   #212121   the chat surface everything sits on
+ *   rail     #171717   sidebar / header chrome
+ *   surface  #2f2f2f   cards, list rows, hover targets
+ *   input    #303030   composer and raised form fields
+ *   well     #0d0d0d   code blocks and deepest wells
+ *   text     #ececec / #b4b4b4 / #989898
+ *   accent   #10a37f   OpenAI green
+ *
+ * Deliberately left alone: --chakra-colors-white (Udacity uses it for ink on
+ * dark hero sections in 40 places, so flipping it would blank out headings),
+ * --chakra-colors-black (used as a surface for promo cards), and every
+ * mid-tone accent (brand blue #175CFF and friends) so program badges and
+ * links keep their identity.
+ */
+
+@-moz-document domain("www.udacity.com"), domain("learn.udacity.com")
+{
+  /* =====================================================================
+   * 1. Palette
+   * ================================================================== */
+
+  :root
+  {
+    --gpt-canvas:      #212121;
+    --gpt-rail:        #171717;
+    --gpt-surface:     #2f2f2f;
+    --gpt-input:       #303030;
+    --gpt-well:        #0d0d0d;
+    --gpt-line:        #3a3a3a;
+    --gpt-line-strong: #4d4d4d;
+    --gpt-text:        #ececec;
+    --gpt-text-muted:  #b4b4b4;
+    --gpt-text-faint:  #989898; /* 4.6:1 on the input surface, 5.6:1 on canvas */
+    --gpt-accent:      #10a37f;
+    --gpt-on-accent:   #ffffff;
+  }
+
+  /* =====================================================================
+   * 2. Chakra design tokens - the main lever
+   *
+   * Declared on every scope Udacity uses for tokens (:root, html, body and
+   * the color-mode attributes) with !important so it also wins if the site's
+   * own dark mode is ever switched on.
+   * ================================================================== */
+
+  :root,
+  html,
+  body,
+  [data-theme],
+  [data-theme=light],
+  [data-theme=dark],
+  .chakra-ui-light,
+  .chakra-ui-dark
+  {
+    /* --- semantic tokens: page, ink, lines, placeholders --- */
+    --chakra-colors-chakra-body-bg: var(--gpt-canvas) !important;
+    --chakra-colors-chakra-body-text: var(--gpt-text) !important;
+    --chakra-colors-chakra-subtle-bg: #262626 !important;
+    --chakra-colors-chakra-subtle-text: var(--gpt-text-muted) !important;
+    --chakra-colors-chakra-border-color: var(--gpt-line) !important;
+    --chakra-colors-chakra-placeholder-color: var(--gpt-text-faint) !important;
+
+    /* --- Chakra's neutral ramp, inverted ---
+       Each step keeps its job: light surfaces become dark surfaces, dark ink
+       becomes light ink. Where one token does both jobs the value is picked
+       to stay legible either way (gray-300 is borders *and* disabled labels,
+       so it lands mid-grey). */
+    --chakra-colors-gray-50:  #191919 !important;
+    --chakra-colors-gray-100: #262626 !important;
+    --chakra-colors-gray-200: #3a3a3a !important;
+    --chakra-colors-gray-300: #565656 !important;
+    --chakra-colors-gray-400: #8e8e8e !important;
+    --chakra-colors-gray-500: #8e8e8e !important;
+    --chakra-colors-gray-600: #b4b4b4 !important;
+    --chakra-colors-gray-700: #2f2f2f !important;
+    --chakra-colors-gray-800: #ececec !important;
+    --chakra-colors-gray-900: #f5f5f5 !important;
+
+    /* --- Udacity's own "grey" ramp ---
+       This is the one the site actually paints copy with: grey-500 is the
+       default body colour, grey-300 captions, grey-200 nav links. */
+    --chakra-colors-grey-50:  #191919 !important;
+    --chakra-colors-grey-100: #262626 !important;
+    --chakra-colors-grey-200: #b4b4b4 !important;
+    --chakra-colors-grey-300: #a3a3a3 !important;
+    --chakra-colors-grey-500: #ececec !important;
+    --chakra-colors-grey-700: #2f2f2f !important;
+    --chakra-colors-grey-900: #0d0d0d !important;
+
+    /* --- support greys (used by dashboard cards and panels) --- */
+    --chakra-colors-supportGray-10:  #191919 !important;
+    --chakra-colors-supportGray-20:  #262626 !important;
+    --chakra-colors-supportGray-30:  #3a3a3a !important;
+    --chakra-colors-supportGray-40:  #8e8e8e !important;
+    --chakra-colors-supportGray-50:  #a3a3a3 !important;
+    --chakra-colors-supportGray-60:  #b4b4b4 !important;
+    --chakra-colors-supportGray-70:  #cfcfcf !important;
+    --chakra-colors-supportGray-90:  #2f2f2f !important;
+
+    /* --- black alphas swap to white alphas ---
+       These are hairline borders and hover washes sized for white paper.
+       Udacity's own dark mode makes exactly this swap (it moves its
+       placeholder colour to whiteAlpha-400), so a 16% black wash becomes a
+       16% white wash. */
+    --chakra-colors-blackAlpha-50:  rgba(255, 255, 255, 0.04) !important;
+    --chakra-colors-blackAlpha-100: rgba(255, 255, 255, 0.06) !important;
+    --chakra-colors-blackAlpha-200: rgba(255, 255, 255, 0.08) !important;
+    --chakra-colors-blackAlpha-300: rgba(255, 255, 255, 0.16) !important;
+    --chakra-colors-blackAlpha-400: rgba(255, 255, 255, 0.24) !important;
+    --chakra-colors-blackAlpha-500: rgba(255, 255, 255, 0.36) !important;
+    --chakra-colors-blackAlpha-600: rgba(255, 255, 255, 0.48) !important;
+    --chakra-colors-blackAlpha-700: rgba(255, 255, 255, 0.64) !important;
+    --chakra-colors-blackAlpha-800: rgba(255, 255, 255, 0.80) !important;
+    --chakra-colors-blackAlpha-900: rgba(255, 255, 255, 0.92) !important;
+
+    /* --- pale accent tints, re-tinted to the same hue on a dark canvas ---
+       Udacity's -50/-100 steps are near-white chips and alert panels. Each
+       value below keeps the original hue at 14% / 20% lightness. Mid-tones
+       (200 and up) are untouched because they carry accent text. */
+    --chakra-colors-red-50:  #361212 !important;
+    --chakra-colors-red-100: #4d1c1a !important;
+    --chakra-colors-orange-50:  #362012 !important;
+    --chakra-colors-orange-100: #4d2f1a !important;
+    --chakra-colors-yellow-50:  #363612 !important;
+    --chakra-colors-yellow-100: #4d4b1a !important;
+    --chakra-colors-green-50:  #12361b !important;
+    --chakra-colors-green-100: #1a4d29 !important;
+    --chakra-colors-teal-50:  #12362e !important;
+    --chakra-colors-teal-100: #1a4d44 !important;
+    --chakra-colors-cyan-50:  #122e36 !important;
+    --chakra-colors-cyan-100: #1a414d !important;
+    --chakra-colors-blue-50:  #121f36 !important;
+    --chakra-colors-blue-100: #1a284d !important;
+    --chakra-colors-purple-50:  #2b1236 !important;
+    --chakra-colors-purple-100: #3e1a4d !important;
+    --chakra-colors-pink-50:  #361219 !important;
+    --chakra-colors-pink-100: #4d1a28 !important;
+    --chakra-colors-crimson-50:  #361212 !important;
+    --chakra-colors-crimson-100: #4d1a1f !important;
+    --chakra-colors-gold-100: #4d391a !important;
+    --chakra-colors-accent-sky-100: #1a2b4d !important;
+    --chakra-colors-accent-sea-foam-100: #1a4d43 !important;
+    --chakra-colors-supportBlue-10: #121f36 !important;
+    --chakra-colors-supportBlue-20: #1a284d !important;
+    --chakra-colors-supportOrange-10: #362012 !important;
+    --chakra-colors-supportOrange-20: #4d2f1a !important;
+
+    /* --- component hooks Udacity's own components read --- */
+    --card-bg: var(--gpt-surface) !important;
+    --card-border-color: var(--gpt-line) !important;
+    --card-shadow: none !important;
+    --popper-bg: var(--gpt-surface) !important;
+    --popper-arrow-bg: var(--gpt-surface) !important;
+    --popper-arrow-shadow-color: var(--gpt-line-strong) !important;
+    --badge-bg: var(--gpt-line) !important;
+    --badge-color: var(--gpt-text) !important;
+    --close-button-bg: rgba(255, 255, 255, 0.1) !important;
+    --close-button-hover-bg: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  /* The same hooks are also re-declared on individual emotion-styled
+     elements, which would otherwise shadow the block above. */
+  [class*="css-"]
+  {
+    --card-bg: var(--gpt-surface) !important;
+    --card-border-color: var(--gpt-line) !important;
+    --card-shadow: none !important;
+    --popper-bg: var(--gpt-surface) !important;
+    --popper-arrow-bg: var(--gpt-surface) !important;
+    --popper-arrow-shadow-color: var(--gpt-line-strong) !important;
+    --badge-bg: var(--gpt-line) !important;
+    --badge-color: var(--gpt-text) !important;
+    --close-button-bg: rgba(255, 255, 255, 0.1) !important;
+    --close-button-hover-bg: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  /* =====================================================================
+   * 3. Page shell
+   *
+   * Udacity paints <body> with background-color: var(--chakra-colors-white)
+   * (a token it also uses for ink), so the canvas is set explicitly here
+   * rather than by re-pointing white.
+   * ================================================================== */
+
+  html,
+  body
+  {
+    background-color: var(--gpt-canvas) !important;
+    color: var(--gpt-text) !important;
+  }
+
+  html
+  {
+    color-scheme: dark; /* native scrollbars, form controls, date pickers */
+  }
+
+  main,
+  [role="main"]
+  {
+    background-color: var(--gpt-canvas) !important;
+  }
+
+  ::selection
+  {
+    background-color: rgba(16, 163, 127, 0.35);
+    color: var(--gpt-text);
+  }
+
+  /* =====================================================================
+   * 4. Surfaces
+   * ================================================================== */
+
+  .chakra-card,
+  .chakra-linkbox,
+  .chakra-popover__content,
+  .chakra-menu__menu-list,
+  .chakra-tooltip,
+  .chakra-modal__content,
+  .chakra-drawer__content,
+  .chakra-accordion__button,
+  .chakra-accordion__panel,
+  .chakra-tabs__tab-panel,
+  .chakra-table__container,
+  .chakra-alert,
+  article > div,
+  article > section
+  {
+    background-color: var(--gpt-surface) !important;
+    border-color: var(--gpt-line) !important;
+  }
+
+  .chakra-card,
+  .chakra-linkbox,
+  article > div
+  {
+    box-shadow: none !important;
+  }
+
+  /* Modal, drawer and menu chrome sits one step off the canvas. */
+  .chakra-modal__header,
+  .chakra-modal__footer,
+  .chakra-drawer__header,
+  .chakra-drawer__footer,
+  .chakra-menu__menu-group-title
+  {
+    background-color: var(--gpt-rail) !important;
+    border-color: var(--gpt-line) !important;
+    color: var(--gpt-text) !important;
+  }
+
+  .chakra-modal__overlay,
+  .chakra-drawer__overlay
+  {
+    background-color: rgba(0, 0, 0, 0.72) !important;
+  }
+
+  .chakra-menu__menuitem,
+  .chakra-menu__menu-item
+  {
+    background-color: transparent !important;
+    color: var(--gpt-text) !important;
+  }
+
+  .chakra-menu__menuitem:hover,
+  .chakra-menu__menuitem:focus,
+  .chakra-menu__menu-item:hover,
+  .chakra-menu__menu-item:focus
+  {
+    background-color: var(--gpt-input) !important;
+  }
+
+  .chakra-tabs__tablist,
+  .chakra-tabs__tab
+  {
+    border-color: var(--gpt-line) !important;
+    color: var(--gpt-text-muted) !important;
+  }
+
+  .chakra-tabs__tab[aria-selected=true]
+  {
+    color: var(--gpt-text) !important;
+    border-bottom-color: var(--gpt-accent) !important;
+  }
+
+  .chakra-accordion__button:hover
+  {
+    background-color: var(--gpt-input) !important;
+  }
+
+  .chakra-divider
+  {
+    border-color: var(--gpt-line) !important;
+    opacity: 1 !important;
+  }
+
+  /* The footer, promo rails and nav chrome read as the sidebar in ChatGPT. */
+  .chakra-linkbox__overlay
+  {
+    color: var(--gpt-text) !important;
+  }
+
+  /* =====================================================================
+   * 5. Type
+   * ================================================================== */
+
+  .chakra-heading,
+  .chakra-text,
+  .chakra-form__label,
+  p,
+  li,
+  dd,
+  dt,
+  figcaption,
+  small,
+  strong,
+  em
+  {
+    color: inherit;
+  }
+
+  blockquote
+  {
+    color: var(--gpt-text) !important;
+    border-color: var(--gpt-line) !important;
+  }
+
+  a
+  {
+    color: var(--gpt-accent);
+  }
+
+  .chakra-link
+  {
+    color: var(--gpt-text) !important;
+  }
+
+  .chakra-link:hover
+  {
+    color: var(--gpt-accent) !important;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp
+  {
+    background-color: var(--gpt-well) !important;
+    color: var(--gpt-text) !important;
+    border-color: var(--gpt-line) !important;
+  }
+
+  /* =====================================================================
+   * 6. Controls
+   * ================================================================== */
+
+  .chakra-input,
+  .chakra-textarea,
+  .chakra-select,
+  .chakra-input__group,
+  .chakra-input__left-element,
+  .chakra-input__right-element,
+  input,
+  select,
+  textarea
+  {
+    background-color: var(--gpt-input) !important;
+    border-color: var(--gpt-line-strong) !important;
+    color: var(--gpt-text) !important;
+    box-shadow: none;
+  }
+
+  input::placeholder,
+  textarea::placeholder
+  {
+    color: var(--gpt-text-faint) !important;
+  }
+
+  .chakra-checkbox__control,
+  .chakra-radio__control,
+  .chakra-switch__track
+  {
+    background-color: var(--gpt-input) !important;
+    border-color: var(--gpt-line-strong) !important;
+  }
+
+  .chakra-checkbox__control[data-checked],
+  .chakra-radio__control[data-checked],
+  .chakra-switch__track[data-checked]
+  {
+    background-color: var(--gpt-accent) !important;
+    border-color: var(--gpt-accent) !important;
+  }
+
+  :focus-visible
+  {
+    outline: 2px solid var(--gpt-accent);
+    outline-offset: 2px;
+  }
+
+  /* =====================================================================
+   * 7. Third-party widgets shipped with the app
+   * (EasyMDE + CodeMirror lesson editors, react-datepicker, swiper rails)
+   * ================================================================== */
+
+  .EasyMDEContainer .CodeMirror,
+  .EasyMDEContainer .editor-toolbar,
+  .EasyMDEContainer .editor-statusbar,
+  .EasyMDEContainer .editor-preview,
+  .EasyMDEContainer .editor-preview-side
+  {
+    background-color: var(--gpt-well) !important;
+    color: var(--gpt-text) !important;
+    border-color: var(--gpt-line) !important;
+  }
+
+  .CodeMirror-gutters,
+  .CodeMirror-linenumber
+  {
+    background-color: var(--gpt-canvas) !important;
+    color: var(--gpt-text-faint) !important;
+    border-color: var(--gpt-line) !important;
+  }
+
+  .CodeMirror-cursor
+  {
+    border-left-color: var(--gpt-text) !important;
+  }
+
+  .EasyMDEContainer .editor-toolbar button
+  {
+    color: var(--gpt-text-muted) !important;
+  }
+
+  .EasyMDEContainer .editor-toolbar button:hover,
+  .EasyMDEContainer .editor-toolbar button.active
+  {
+    background-color: var(--gpt-input) !important;
+    border-color: var(--gpt-line-strong) !important;
+    color: var(--gpt-text) !important;
+  }
+
+  .react-datepicker,
+  .react-datepicker__header,
+  .react-datepicker__time-container,
+  .react-datepicker__time-box,
+  .react-datepicker__day,
+  .react-datepicker__month-text,
+  .react-datepicker__current-month,
+  .react-datepicker-time__header
+  {
+    background-color: var(--gpt-surface) !important;
+    color: var(--gpt-text) !important;
+    border-color: var(--gpt-line) !important;
+  }
+
+  .react-datepicker__day:hover,
+  .react-datepicker__month-text:hover,
+  .react-datepicker__year-text:hover
+  {
+    background-color: var(--gpt-input) !important;
+  }
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected,
+  .react-datepicker__month-text--selected,
+  .react-datepicker__year-text--selected
+  {
+    background-color: var(--gpt-accent) !important;
+    color: var(--gpt-on-accent) !important;
+  }
+
+  .react-datepicker__day--outside-month
+  {
+    color: var(--gpt-text-faint) !important;
+  }
+
+  .swiper-pagination-bullet
+  {
+    background-color: var(--gpt-text-faint) !important;
+    opacity: 0.6;
+  }
+
+  .swiper-pagination-bullet-active
+  {
+    background-color: var(--gpt-text) !important;
+    opacity: 1;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev
+  {
+    color: var(--gpt-text) !important;
+  }
+
+  .PhoneInputCountrySelectArrow,
+  .PhoneInputCountryIcon--border
+  {
+    color: var(--gpt-text-muted) !important;
+    border-color: var(--gpt-line) !important;
+    background-color: transparent !important;
+  }
+
+  /* =====================================================================
+   * 8. Native chrome
+   * ================================================================== */
+
+  ::-webkit-scrollbar
+  {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track
+  {
+    background: var(--gpt-canvas);
+  }
+
+  ::-webkit-scrollbar-thumb
+  {
+    background: var(--gpt-line-strong);
+    border: 3px solid var(--gpt-canvas);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover
+  {
+    background: #5f5f5f;
+  }
+
+  /*
+   * Escape hatch
+   * ------------
+   * Udacity renders some panels as bare emotion-styled <div>s whose hashed
+   * class name carries background-color: var(--chakra-colors-white). If a
+   * light panel survives on a page you use, uncomment the rule below: it
+   * neutralises every emotion-generated surface so the canvas shows through.
+   *
+   * div[class*="css-"] { background-color: transparent !important; }
+   */
+}
