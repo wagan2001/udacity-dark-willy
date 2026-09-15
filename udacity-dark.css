@@ -1,66 +1,123 @@
 /* ==UserStyle==
-@name			Udacity Dark
-@author			Derek Whatley
-@version		1.0
+@name         Udacity Dark
+@author       Derek Whatley
+@version      1.1
+@description  A restrained dark theme for classroom.udacity.com
+@homepageURL  https://github.com/wagan2001/udacity-dark-willy
 ==/UserStyle== */
+
+/*
+ * Udacity Dark
+ * ------------
+ * Import this file into a userstyle manager (Stylus, Cascadea, ...) and it
+ * applies to classroom.udacity.com only. Selectors target Udacity's hashed
+ * CSS module class names, so a new Udacity build can invalidate a hash and
+ * send a rule back to the drawing board.
+ *
+ * Every colour lives in the :root block and is referenced through custom
+ * properties, so re-theming means editing that block alone.
+ */
 
 @-moz-document domain("classroom.udacity.com"), url-prefix("classroom.udacity.com")
 {
-	/* Background Colors */
-	
-	
-	  html
-	  {
-	    background: rgb(28, 38, 47) !Important;
-	  }
-	
-	  ._main--content-container--ILkoI
-	  {
-	    color: #fff;
-	    background: #333;
-	  }
-	  
-	    ._main--footer-container--3vC-_
-	  {
-	    color: #fff;
-	    background: #333;
-	  }
-	
-	  .small-card--footer--2vCDq, .ace_content
-	  {
-	    background: #444;
-	    border-top: 1px solid #555;
-	  }
-	
-	  .vds-button--secondary {
-	    color: #fff;
-	    background: #333;
-	    border: 1px solid #000;
-	  }
-	  
-	  .index--instructor-notes-container--24U8Y, .index--instructor-notes-wide--6JxNO, .index--instructor-notes-container--24U8Y {
-	    color: #fff;
-	    background: #333;
-	  }
-	 
-	 .index--container-wide--2OK8C .index--instructor-notes-container--24U8Y {
-	    color: #fff;
-	    background: #333;
-	 }
-	  
-	  h3#errata {
-	    color: #fff;
-	  }
-	  
-	  div.index-module--markdown--2MdcR.ureact-markdown {
-	    color: rgb(227, 227, 227);;
-	  }
-	
-	  .ureact-button--secondary--2oU3S,
-	.result-modal--body--15QMq,
-	.index--header--1mrDQ,
-	.modal--header--31IeI
-	  {
-	    background: #2e3d49 !Important;
-	  }
+  /* ---------------------------------------------------------------------
+   * Palette
+   * ------------------------------------------------------------------ */
+
+  :root
+  {
+    --ud-page:           #1c262f; /* rgb(28, 38, 47) - page background */
+    --ud-surface:        #333333; /* content panels, footers, notes */
+    --ud-surface-raised: #444444; /* card footers, code editor */
+    --ud-header:         #2e3d49; /* modal and section headers */
+    --ud-border:         #555555;
+    --ud-border-strong:  #000000;
+    --ud-text:           #ffffff;
+    --ud-text-muted:     #e3e3e3; /* long-form reading text */
+  }
+
+  /* ---------------------------------------------------------------------
+   * Page shell
+   * ------------------------------------------------------------------ */
+
+  html
+  {
+    background: var(--ud-page) !important;
+  }
+
+  /* ---------------------------------------------------------------------
+   * Content panels
+   * ------------------------------------------------------------------ */
+
+  /* Lesson content and its footer share one surface. */
+  ._main--content-container--ILkoI,
+  ._main--footer-container--3vC-_
+  {
+    color: var(--ud-text);
+    background: var(--ud-surface);
+  }
+
+  /* Card footers and the code editor sit one step above that surface. */
+  .small-card--footer--2vCDq,
+  .ace_content
+  {
+    background: var(--ud-surface-raised);
+    border-top: 1px solid var(--ud-border);
+  }
+
+  /* ---------------------------------------------------------------------
+   * Buttons
+   * ------------------------------------------------------------------ */
+
+  .vds-button--secondary
+  {
+    color: var(--ud-text);
+    background: var(--ud-surface);
+    border: 1px solid var(--ud-border-strong);
+  }
+
+  /* ---------------------------------------------------------------------
+   * Instructor notes
+   * ------------------------------------------------------------------ */
+
+  .index--instructor-notes-container--24U8Y,
+  .index--instructor-notes-wide--6JxNO
+  {
+    color: var(--ud-text);
+    background: var(--ud-surface);
+  }
+
+  /* The same surface inside the wide layout. Kept as a descendant rule so
+     its higher specificity still wins there. */
+  .index--container-wide--2OK8C .index--instructor-notes-container--24U8Y
+  {
+    color: var(--ud-text);
+    background: var(--ud-surface);
+  }
+
+  /* ---------------------------------------------------------------------
+   * Headings and body copy
+   * ------------------------------------------------------------------ */
+
+  h3#errata
+  {
+    color: var(--ud-text);
+  }
+
+  div.index-module--markdown--2MdcR.ureact-markdown
+  {
+    color: var(--ud-text-muted);
+  }
+
+  /* ---------------------------------------------------------------------
+   * Modals and secondary surfaces
+   * ------------------------------------------------------------------ */
+
+  .ureact-button--secondary--2oU3S,
+  .result-modal--body--15QMq,
+  .index--header--1mrDQ,
+  .modal--header--31IeI
+  {
+    background: var(--ud-header) !important;
+  }
 }
